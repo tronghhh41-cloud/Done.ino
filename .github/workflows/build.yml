@@ -25,6 +25,7 @@ jobs:
             - name: ESP32Servo
             - name: MPU6050
             - name: HMC5883L
+            - name: Adafruit Unified Sensor
             - name: Adafruit BMP280 Library
             - name: TinyGPSPlus
 
