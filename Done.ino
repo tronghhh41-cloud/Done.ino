@@ -8,15 +8,15 @@
 #include <Adafruit_BMP280.h>
 #include <TinyGPSPlus.h>
 
-/* ================= MOTOR ================= */
+/* ================= MOTOR (SAFE GPIO) ================= */
 #define M1_PIN 4
 #define M2_PIN 5
-#define M3_PIN 6
-#define M4_PIN 7
+#define M3_PIN 16
+#define M4_PIN 17
 
 Servo m1, m2, m3, m4;
 
-/* ================= LED RGB (ONBOARD) ================= */
+/* ================= LED RGB ONBOARD ================= */
 #define LED_R 10
 #define LED_G 11
 #define LED_B 12
@@ -109,10 +109,10 @@ void setup() {
 
   GPSSerial.begin(9600, SERIAL_8N1, 18, 17);
 
-  m1.attach(M1_PIN);
-  m2.attach(M2_PIN);
-  m3.attach(M3_PIN);
-  m4.attach(M4_PIN);
+  m1.attach(M1_PIN, 1000, 2000);
+  m2.attach(M2_PIN, 1000, 2000);
+  m3.attach(M3_PIN, 1000, 2000);
+  m4.attach(M4_PIN, 1000, 2000);
 
   m1.writeMicroseconds(1000);
   m2.writeMicroseconds(1000);
@@ -189,7 +189,7 @@ void loop() {
   else if (homeSet) setLED(1,0,1);       // 🟣
   else setLED(0,1,0);                    // 🟢
 
-  throttle = constrain(throttle, 1100, 1750);
+  throttle = constrain(throttle, 1100, 1700); // phù hợp pin 5C
 
   /* ===== MOTOR OUTPUT ===== */
   if (rx.arm || armed) {
