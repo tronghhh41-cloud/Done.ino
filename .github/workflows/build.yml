@@ -1,4 +1,4 @@
-name: Compile Arduino Sketch
+name: Compile ESP32 Done
 
 on:
   push:
@@ -9,27 +9,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout source
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Compile sketch
         uses: arduino/compile-sketches@v1
         with:
-          fqbn: esp32:esp32:esp32s3
-
+          fqbn: esp32:esp32:esp32
+          sketch-paths: |
+            ./Done
+          libraries: |
+            ESP32Servo
+            MPU6050
+            TinyGPSPlus
+            Adafruit BMP280 Library
+            Adafruit HMC5883 Unified
+            Adafruit Unified Sensor
           platforms: |
             - name: esp32:esp32
               source-url: https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
-
-          libraries: |
-            - name: ESP32Servo
-            - name: MPU6050
-            - name: HMC5883L
-            - name: Adafruit Unified Sensor
-            - name: Adafruit BMP280 Library
-            - name: TinyGPSPlus
-
-          sketch-paths: |
-            ./Done.ino
-
-          verbose: true
