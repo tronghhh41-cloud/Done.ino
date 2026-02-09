@@ -1,8 +1,8 @@
-name: Build Done.ino
+name: Build ESP32 BIN
 
 on:
   push:
-  pull_request:
+    branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
@@ -10,22 +10,36 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+    - name: Checkout
+      uses: actions/checkout@v4
 
-      - name: Compile
-        uses: arduino/compile-sketches@v1
-        with:
-          fqbn: esp32s3:esp32s3:esp32s3
-          sketch-paths: |
-            ./Done.ino
-          libraries: |
-            ESP32s3Servo
-            MPU6050
-            TinyGPSPlus
-            Adafruit BMP280 Library
-            Adafruit HMC5883 Unified
-            Adafruit Unified Sensor
-          platforms: |
-            - name: esp32s3:esp32s3
-              source-url: https://raw.githubusercontent.com/espressif/arduino-esp32s3/gh-pages/package_esp32s3_index.json
+    - name: Setup Arduino CLI
+      uses: arduino/setup-arduino-cli@v1
+
+    - name: Install ESP32 core
+      run: |
+        arduino-cli core update-index
+        arduino-cli core install esp32:esp32
+
+    - name: Install libraries
+      run: |
+        arduino-cli lib install "MPU6050"
+        arduino-cli lib install "Adafruit Unified Sensor"
+        arduino-cli lib install "Adafruit HMC5883 Unified"
+        arduino-cli lib install "Adafruit BMP280 Library"
+        arduino-cli lib install "TinyGPSPlus"
+        arduino-cli lib install "Adafruit NeoPixel"
+        arduino-cli lib install "ESP32Servo"
+
+    - name: Compile
+      run: |
+        arduino-cli compile \
+          --fqbn esp32:esp32:esp32 \
+          --output-dir build \
+          Done.ino
+
+    - name: Upload BIN
+      uses: actions/upload-artifact@v4
+      with:
+        name: firmware-bin
+        path: build/*.bin
